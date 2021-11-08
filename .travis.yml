@@ -1,0 +1,15 @@
+language: python
+python:
+  - '3.8'
+
+before_script:
+  - pipenv install
+  - export MOZ_HEADLESS=1
+
+env: DJANGO_SETTINGS_MODULE="PurBeurre.settings_travis"
+
+services:
+  - postgresql
+
+script:
+  - ./manage.py test catalogue/tests/ user/tests/

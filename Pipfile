@@ -17,6 +17,8 @@ whitenoise = "*"
 dj-database-url = "*"
 gunicorn = "*"
 requests = "*"
+sentry-sdk = "*"
+raven = "*"
 
 [requires]
 python_version = "3.8"
