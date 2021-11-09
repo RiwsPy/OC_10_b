@@ -55,7 +55,7 @@ class Test_ImportAPIData(TestCase):
 
         with self.assertRaisesMessage(
                 DataError,
-                'ERREUR:  valeur trop longue pour le type character varying(100)'):
+                ''):
             Product.objects.create(**product_02)
 
     @patch('requests.get')
