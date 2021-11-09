@@ -59,6 +59,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -157,10 +159,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INTERNAL_IPS = ['127.0.0.1']
 
-if not DEBUG:
-    STATIC_ROOT = ''
-else:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 FIXTURE_DIRS = ['catalogue', 'user']
 
@@ -168,6 +167,7 @@ if os.getenv('ENV') == 'PRODUCTION':
     # Simplified static file serving.
     STATICFILES_STORAGE = \
         'django.contrib.staticfiles.storage.StaticFilesStorage'
+        #'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
     db_from_env = dj_database_url.config(conn_max_age=500)
     DATABASES['default'].update(db_from_env)
@@ -217,43 +217,7 @@ LOGGING = {
     },
 }
 
-"""
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
-                       'pathname=%(pathname)s lineno=%(lineno)s ' +
-                       'funcname=%(funcName)s %(message)s'),
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        }
-    },
-    'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'logging.NullHandler',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
-        }
-    },
-    'loggers': {
-        'testlogger': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        }
-    }
-}"""
-
 DEBUG_PROPAGATE_EXCEPTIONS = True
-
-
 
 sentry_sdk.init(
     dsn="https://d42e418337c0497ca27ee7012c862b71@o1055791.ingest.sentry.io/6041945",
