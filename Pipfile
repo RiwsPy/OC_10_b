@@ -19,6 +19,7 @@ gunicorn = "*"
 requests = "*"
 sentry-sdk = "*"
 raven = "*"
+supervisor = "*"
 
 [requires]
 python_version = "3.8"
