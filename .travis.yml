@@ -11,5 +11,10 @@ env: DJANGO_SETTINGS_MODULE="PurBeurre.settings_travis"
 services:
   - postgresql
 
+# safelist
+branches:
+  only:
+    - staging
+
 script:
   - ./manage.py test catalogue/tests/ user/tests/
