@@ -3,6 +3,9 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 import raven
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DEBUG = False
 ALLOWED_HOSTS= ['165.232.112.10']
