@@ -11,11 +11,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from dotenv import load_dotenv
 import os
 
 # SECURITY WARNING: don't run with debug turned on in production!
-load_dotenv()
 DEBUG = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

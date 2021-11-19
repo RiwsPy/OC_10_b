@@ -9,8 +9,8 @@ ALLOWED_HOSTS= ['165.232.112.10']
 
 
 MIDDLEWARE.insert(
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    MIDDLEWARE.index('django.middleware.security.SecurityMiddleware')+1
+    MIDDLEWARE.index('django.middleware.security.SecurityMiddleware')+1,
+    'whitenoise.middleware.WhiteNoiseMiddleware'
     )
 
 
