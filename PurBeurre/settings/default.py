@@ -13,11 +13,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-import dj_database_url
-
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-import raven
 
 # SECURITY WARNING: don't run with debug turned on in production!
 load_dotenv()
@@ -46,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_extensions',
-    'debug_toolbar',
 
     'catalogue.apps.CatalogueConfig',
     'user.apps.UserConfig',
@@ -63,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.locale.LocaleMiddleware',
 ]
 

@@ -1,7 +1,18 @@
 from .default import *
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+import raven
+import dj_database_url
 
 DEBUG = False
 ALLOWED_HOSTS= ['165.232.112.10']
+
+
+MIDDLEWARE.insert(
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    MIDDLEWARE.index('django.middleware.security.SecurityMiddleware')+1
+    )
+
 
 # Simplified static file serving.
 STATICFILES_STORAGE = \
