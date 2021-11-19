@@ -1,4 +1,4 @@
-from .default import *
+from . import *
 
 INSTALLED_APPS.append('debug_toolbar')
 
