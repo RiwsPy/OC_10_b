@@ -4,7 +4,6 @@ python:
 
 before_script:
   - pipenv install
-  - export MOZ_HEADLESS=1
 
 env: DJANGO_SETTINGS_MODULE="PurBeurre.settings.travis"
 
