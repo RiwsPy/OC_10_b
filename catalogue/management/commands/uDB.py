@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from .enums import HEADERS, PAYLOAD, CATEGORIES, URL_SEARCH
 import requests
 from catalogue.models import Product, Category
+from django.db.models.deletion import ProtectedError
 
 
 class Command(BaseCommand):
@@ -21,6 +22,11 @@ class Command(BaseCommand):
         code_set = set()
         print("Mise à jour de la base de données...")
         params = PAYLOAD.copy()
+        for product in Product.objects.all():
+            try:
+                product.delete()
+            except ProtectedError:
+                pass
 
         for category in CATEGORIES:
             params["tag_0"] = category
