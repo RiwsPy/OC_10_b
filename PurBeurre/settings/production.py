@@ -15,8 +15,8 @@ MIDDLEWARE.insert(
 
 
 # Simplified static file serving.
-STATICFILES_STORAGE = \
-    'django.contrib.staticfiles.storage.StaticFilesStorage'
+#STATICFILES_STORAGE = \
+    #'django.contrib.staticfiles.storage.StaticFilesStorage'
     #'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 db_from_env = dj_database_url.config(conn_max_age=500)

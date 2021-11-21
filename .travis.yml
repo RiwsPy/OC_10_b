@@ -6,12 +6,14 @@ before_script:
   - pipenv install
   - export MOZ_HEADLESS=1
 
+after_script:
+  - unset MOZ_HEADLESS
+
 env: DJANGO_SETTINGS_MODULE="PurBeurre.settings.travis"
 
 services:
   - postgresql
 
-# safelist
 branches:
   only:
     - staging
