@@ -1,0 +1,43 @@
+<div class="row align-items-center justify-content-center text-center">
+    <div class="column align-self-end">
+        <div class="container">
+            <div class="form-group">
+                <div>
+                    <label for="email_data"></label>
+                    <input type="search"
+                        name="user_new_email"
+                        id="email_data"
+                        placeholder="{{ user.email }}"
+                        size="30"
+                        readonly>
+                </div>
+
+                <div>
+                    <label for="email_input_1"></label>
+                    <input type="search"
+                        name="user_new_email"
+                        id="email_input_1"
+                        placeholder="Nouvel e-mail"
+                        size="30"
+                        autofocus
+                        required
+                        spellcheck="false"
+                        autocomplete="off">
+                </div>
+
+                <div>
+                    <label for="email_input_confirm"></label>
+                    <input type="search"
+                        name="user_new_email_confirm"
+                        id="email_input_confirm"
+                        placeholder="Confirmez e-mail"
+                        size="30"
+                        required
+                        spellcheck="false"
+                        autocomplete="off">
+                </div>
+            </div>
+            <button id="change_email_button" type="submit" class="btn btn-outline-primary">Changer</button>
+        </div>
+    </div>
+</div>

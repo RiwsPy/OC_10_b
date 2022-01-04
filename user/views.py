@@ -4,6 +4,10 @@ from .forms import UserForm
 from django.contrib.auth.decorators import login_required
 from catalogue.models import Favorite_product, Product
 import re
+from django.contrib.auth.models import User
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -111,3 +115,59 @@ def favorite(request):
     context['display_save_button'] = True
 
     return render(request, 'catalogue/result.html', context)
+
+
+@login_required(login_url='/user/login/')
+def delete_account(request):
+    if request.user.is_authenticated:
+        if request.method == 'GET':
+            return JsonResponse({
+                'text':'Supprimer son compte est un choix définitif, veuillez le confirmer.'})
+
+        request.user.delete()
+    return redirect('home')
+
+
+@login_required(login_url='/user/login/')
+def change_email(request):
+    context = {'msgs': []}
+    if request.method != 'POST':
+        context['msgs'].append('Erreur : E-mail non modifié !')
+        return redirect('home')
+
+    context['msgs'] = user_change_email(
+                request.user,
+                request.POST.get('user_new_email', ''),
+                request.POST.get('user_new_email_confirm', ''))
+
+    return render(request, 'user/account.html', context)
+
+
+def user_change_email(user, new_email_1: str, new_email_2: str) -> str:
+    msgs = []
+    if not new_email_1 or not new_email_2:
+        msgs.append('Tous les champs ne sont pas renseignés.')
+    elif new_email_2 != new_email_1:
+        msgs.append('Les deux adresses ne sont pas identiques.')
+    elif new_email_1 == user.email:
+        msgs.append("L'adresse email n'a pas été changée.")
+    else:
+        try:
+            validate_email(new_email_1)
+        except ValidationError as e:
+            msgs.extend(e)
+        else:
+            user.email = new_email_1
+            user.save()
+            msgs.append("Changement effectué.")
+    return msgs
+
+
+@login_required(login_url='/user/login/')
+def modify_account(request):
+    context = {
+        'page_title': request.user.username,
+        'msgs': ['Modification de mes informations']
+    }
+
+    return render(request, 'user/modify_account.html', context)

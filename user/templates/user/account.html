@@ -1,17 +1,12 @@
-{% extends 'templates/layouts/base.html' %}
+{% extends 'templates/layouts/account.html' %}
 
-{% block title %}Mon compte{% endblock %}
-
-{% block content %}
-    {% include 'templates/layouts/message.html' %}
-    <div class="background-content">
-        <div class="row text-center" style="height:300px;">
-            <div class="col-12">
-
-                <span class="print-data">Email : {{ user.email }}</p>
-
-            </div>
-        </div>
-    </div>
+{% block account_content %}
+    <span class="print-data">Email : {{ user.email }}</span>
 {% endblock %}
 
+{% block account_extended %}
+    <hr class="divider" />
+    <a href="{% url 'modify_account' %}"
+    class="btn btn-outline-primary"
+    role="button">Modifier mes informations</a>
+{% endblock %}

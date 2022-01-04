@@ -1,0 +1,17 @@
+{% extends 'templates/layouts/account.html' %}
+{% load static %}
+
+{% block account_content %}
+    <form method="POST" action="{% url 'change_email' %}" accept-charset="utf8">
+        {% csrf_token %}
+        {% include 'templates/layouts/change_email_form.html' %}
+    </form>
+
+    <hr class="divider" />
+    <h4 class="color-caramel" id="delete_text"></h4>
+    <button id="delete_account" onClick="return show_confirm_message()" class="btn btn-danger">Se Désinscrire</button>
+    <form id="delete_account_confirm" method="POST" style="display: none;" action="{% url 'delete_account' %}">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">Confirmer</button>
+    </form>
+{% endblock %}
