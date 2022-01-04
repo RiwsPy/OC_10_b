@@ -11,6 +11,7 @@ from catalogue.management.commands.enums import URL_OFF
 username = 'Rititi'
 email = 'ri.titi@mail.fr'
 password = 'pNd9sdfi'
+new_email = 'ri.tata@mail.fr'
 
 
 class Test_favorite_product(LiveServerTestCase):
@@ -167,3 +168,79 @@ class Test_favorite_product(LiveServerTestCase):
         self.assertEqual(
             self.driver.current_url,
             self.live_server_url + reverse('home'))
+
+
+class Test_change_email(LiveServerTestCase):
+    def setUp(self):
+        # Create new user
+        self.data = {
+            'username': username,
+            'email': email,
+            'password': password,
+        }
+        self.user = User.objects.create_user(**self.data)
+        self.client.login(**self.data)
+
+        root_dir = os.path.dirname(os.path.abspath(__file__))
+        self.driver = webdriver.Firefox(
+            executable_path=os.path.join(root_dir, 'geckodriver'))
+        self.action = webdriver.ActionChains(self.driver)
+
+        # Open the navigator with the server adress
+        self.driver.get(self.live_server_url)
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test_login(self):
+        login = self.driver.find_element_by_id('login_button')
+        login.click()
+        self.driver.implicitly_wait(3)
+        username_field = self.driver.find_element_by_id('id_username')
+        username_field.send_keys(username)
+        password_field = self.driver.find_element_by_id('id_password1')
+        password_field.send_keys(password)
+        button_ok = self.driver.find_element_by_id('login_validate')
+        self.action.move_to_element(button_ok)
+        button_ok.click()
+        self.change_email()
+
+    def change_email(self):
+        login = self.driver.find_element_by_id('account_button')
+        login.click()
+        self.driver.implicitly_wait(3)
+        time.sleep(3)
+        change_button = self.driver.find_element_by_id('change_account_data')
+        change_button.click()
+
+        time.sleep(1)
+        email_field = self.driver.find_element_by_id('email_input_1')
+        email_field.send_keys(new_email)
+        email_field = self.driver.find_element_by_id('email_input_confirm')
+        time.sleep(1)
+        email_field.send_keys(new_email)
+        button_ok = self.driver.find_element_by_id('change_email_button')
+        button_ok.click()
+        time.sleep(2)
+
+        self.assertEqual(
+            User.objects.get(username=username).email,
+            new_email)
+
+        #email_field = self.driver.find_element_by_class_name('print-data')
+        #self.assertEqual(email_field.innerText, new_email)
+        self.delete_account()
+
+    def delete_account(self):
+        change_button = self.driver.find_element_by_id('change_account_data')
+        change_button.click()
+        button_delete_1 = self.driver.find_element_by_id('delete_account')
+        button_delete_1.click()
+        time.sleep(1)
+        button_delete_2 = self.driver.find_element_by_id('delete_account_confirm')
+        button_delete_2.click()
+        time.sleep(1)
+
+        self.assertEqual(
+            User.objects.filter(username=username).count(),
+            0)

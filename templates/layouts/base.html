@@ -44,7 +44,7 @@
                             {% include 'templates/layouts/search_form_nav.html' %}
                         </li>
                         {% if user.is_authenticated %}
-                            <li class="nav-item"><a class="nav-link" href="/user/login/"><button type="button" class="btn btn-warning" title="Mon compte"><i class="fas fa-user"></i></button></a></li>
+                            <li class="nav-item"><a class="nav-link" href="/user/login/"><button type="button" id="account_button" class="btn btn-warning" title="Mon compte"><i class="fas fa-user"></i></button></a></li>
                             <li class="nav-item"><a class="nav-link" href="/user/favorite/"><button type="button" class="btn btn-warning" title="Mes aliments" id="favorite_button"><img src="{% static 'img/carrot.png' %}" width="20" height="20" alt="Food menu"/></button></a></li>
                             <li class="nav-item"><a class="nav-link" href="/user/logout/"><button type="button" class="btn btn-warning" title="Déconnexion" id="logout_button"><i class="fas fa-sign-out-alt"></i></button></a></li>
                         {% else %}
