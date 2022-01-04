@@ -9,6 +9,7 @@ password = 'Pxâ76jjs1Ps'
 new_email_good = 'lou-lou@test.com'
 new_email_wrong = 'loulou@testcom'
 
+
 class User_test(TestCase):
     def setUp(self):
         self.data = {
@@ -19,16 +20,6 @@ class User_test(TestCase):
         self.user = User.objects.create_user(**self.data)
         self.user.save()
         self.client.login(**self.data)
-
-    def user_login(self):
-        pass
-        #is_authenticated = self.client.login(username=username, password=password)
-        #self.assertTrue(is_authenticated)
-
-        #kwargs = self.data.copy()
-        #kwargs['password1'] = kwargs['password']
-        #self.client.post(reverse('login'), kwargs, follow=True)
-
 
     def test_create_user(self):
         self.assertEqual(self.user.username, username)
@@ -55,8 +46,8 @@ class User_test(TestCase):
     def test_change_email_ok(self):
         response = self.client.post(
             reverse('change_email'),
-            {'user_new_email':new_email_good,
-            'user_new_email_confirm':new_email_good})
+            {'user_new_email': new_email_good,
+             'user_new_email_confirm': new_email_good})
 
         self.assertEqual(response.context['user'].email, new_email_good)
 
@@ -74,7 +65,7 @@ class User_test(TestCase):
         self.assertEqual(self.user.email, email)
 
     def test_delete_user_ok(self):
-        response = self.client.post(reverse('delete_account'))
+        self.client.post(reverse('delete_account'))
         self.assertEqual(User.objects.filter(username=username).count(), 0)
 
     def test_delete_user_fail(self):

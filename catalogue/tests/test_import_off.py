@@ -62,8 +62,9 @@ class Test_ImportAPIData(TestCase):
     def test_request_ok_call_api(self, mock_request):
         mock_request.return_value.status_code = 200
         with open(
-                os.path.join(Path(__file__).resolve().parent,
-                "db_product_mock.json")) as file:
+                os.path.join(
+                    Path(__file__).resolve().parent,
+                    "db_product_mock.json")) as file:
             file = load(file)
         mock_request.return_value.json.return_value = file
 

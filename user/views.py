@@ -4,7 +4,6 @@ from .forms import UserForm
 from django.contrib.auth.decorators import login_required
 from catalogue.models import Favorite_product, Product
 import re
-from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
@@ -122,7 +121,8 @@ def delete_account(request):
     if request.user.is_authenticated:
         if request.method == 'GET':
             return JsonResponse({
-                'text':'Supprimer son compte est un choix définitif, veuillez le confirmer.'})
+                'text': 'Supprimer son compte est un choix définitif' +
+                        ', veuillez le confirmer.'})
 
         request.user.delete()
     return redirect('home')

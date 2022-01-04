@@ -20,7 +20,8 @@ class Test_favorite_product(LiveServerTestCase):
         category_01 = Category.objects.create(
             name="Plat léger"
         )
-        img_link = URL_OFF + "images/products/317/658/201/6252/front_fr.59.400.jpg"
+        img_link = URL_OFF +\
+            "images/products/317/658/201/6252/front_fr.59.400.jpg"
         product_01 = Product.objects.create(
             code="32",
             product_name="Fromage à raclette",
@@ -39,7 +40,8 @@ class Test_favorite_product(LiveServerTestCase):
         product_01.categories.set([category_01])
 
         cod = 355
-        img_link = URL_OFF + "images/products/359/669/013/6046/front_fr.39.400.jpg",
+        img_link = URL_OFF +\
+            "images/products/359/669/013/6046/front_fr.39.400.jpg",
         for i in range(10):
             new_product = Product.objects.create(
                 code=str(cod+i),
@@ -227,18 +229,16 @@ class Test_change_email(LiveServerTestCase):
             User.objects.get(username=username).email,
             new_email)
 
-        #email_field = self.driver.find_element_by_class_name('print-data')
-        #self.assertEqual(email_field.innerText, new_email)
         self.delete_account()
 
     def delete_account(self):
         change_button = self.driver.find_element_by_id('change_account_data')
         change_button.click()
-        button_delete_1 = self.driver.find_element_by_id('delete_account')
-        button_delete_1.click()
+        btn_delete_1 = self.driver.find_element_by_id('delete_account')
+        btn_delete_1.click()
         time.sleep(1)
-        button_delete_2 = self.driver.find_element_by_id('delete_account_confirm')
-        button_delete_2.click()
+        btn_delete_2 = self.driver.find_element_by_id('delete_account_confirm')
+        btn_delete_2.click()
         time.sleep(1)
 
         self.assertEqual(
