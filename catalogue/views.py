@@ -1,6 +1,7 @@
 from django.db.models.query import QuerySet, EmptyQuerySet
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
+from django.urls.base import reverse
 from .models import Favorite_product, Product
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.exceptions import ObjectDoesNotExist
@@ -14,7 +15,7 @@ from django.core.handlers.wsgi import WSGIRequest
 # Create your views here.
 def result(request: WSGIRequest) -> HttpResponse:
     if request.method != 'GET':
-        return redirect(request.META['HTTP_REFERER'])
+        return redirect_last_page_or_home(request)
 
     user_search = request.GET.get('user_search', '')[:100]
     all_objects = []
@@ -141,23 +142,28 @@ def details(request: WSGIRequest, product_id: str) -> HttpResponse:
 @login_required(login_url='/user/login/')
 def save_product(request: WSGIRequest) -> HttpResponse:
     if request.method != 'POST':
-        return redirect(request.META.get('HTTP_REFERER', 'home'))
+        return redirect_last_page_or_home(request)
 
-    product_search_id = \
-        Product.objects.get(code=request.POST['product_search_id'])
+    try:
+        product_search = request.POST['product_search_id']
+        substitute = request.POST['substitute_id']
+    except KeyError:
+        return redirect_last_page_or_home(request)
 
-    substitute_id = Product.objects.get(code=request.POST['substitute_id'])
-
-    if not substitute_id:
-        return redirect(request.META['HTTP_REFERER'])
+    try:
+        product_search_id = \
+            Product.objects.get(pk=product_search)
+        substitute_id = Product.objects.get(pk=substitute)
+    except ObjectDoesNotExist:
+        return redirect_last_page_or_home(request)
 
     context = {'msgs': []}
     already_saved = Favorite_product.objects.filter(
             user=request.user,
-            product=request.POST['product_search_id'],
-            substitute=request.POST['substitute_id'])
+            product=product_search,
+            substitute=substitute)
 
-    if not already_saved and product_search_id:
+    if not already_saved:
         new_favorite_product = Favorite_product()
         new_favorite_product.product = product_search_id
         new_favorite_product.substitute = substitute_id
@@ -165,29 +171,39 @@ def save_product(request: WSGIRequest) -> HttpResponse:
         new_favorite_product.save()
         context['msgs'].append('Produit sauvegardé avec succès.')
 
-    return redirect(request.META['HTTP_REFERER'], context=context)
+    return redirect_last_page_or_home(request)
 
 
 @login_required(login_url='/user/login/')
 def delete_product(request: WSGIRequest) -> HttpResponse:
     if request.method != 'POST':
-        return redirect(request.META.get('HTTP_REFERER', 'home'))
+        return redirect_last_page_or_home(request)
+
+    try:
+        product_id = request.POST['product_search_id']
+        substitute_id = request.POST['substitute_id']
+    except KeyError:
+        return redirect_last_page_or_home(request)
 
     context = {'msgs': []}
-    if request.POST['product_search_id'] == '':
+    if product_id == '':
         # delete one product and all substitute
         already_saved = Favorite_product.objects.filter(
                 user=request.user,
-                product=request.POST['substitute_id'])
+                product=substitute_id)
     else:
         # delete one substitute to one product
         already_saved = Favorite_product.objects.filter(
                 user=request.user,
-                product=request.POST['product_search_id'],
-                substitute=request.POST['substitute_id'])
+                product=product_id,
+                substitute=substitute_id)
 
     if already_saved:
         already_saved.delete()
         context['msgs'].append('Produit retiré avec succès.')
 
-    return redirect(request.META['HTTP_REFERER'], context=context)
+    return redirect_last_page_or_home(request)
+
+
+def redirect_last_page_or_home(request: WSGIRequest) -> HttpResponse:
+    return redirect(request.META.get('HTTP_REFERER', reverse('home')))

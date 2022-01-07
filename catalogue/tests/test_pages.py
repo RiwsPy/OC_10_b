@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls.base import reverse
-from catalogue.models import Product, Category
+from catalogue.models import Product, Category, Favorite_product
 from django.contrib.auth.models import User
 from catalogue.management.commands.enums import URL_OFF
 
@@ -152,7 +152,7 @@ email = 'loulou@test.com'
 password = 'Pxâ76jjs1Ps'
 
 
-class Favorite_product(TestCase):
+class Favorite_products(TestCase):
     def setUp(self):
         self.data = {
             'username': username,
@@ -160,9 +160,70 @@ class Favorite_product(TestCase):
             'password': password,
         }
         self.user = User.objects.create_user(**self.data)
+        self.client.login(**self.data)
         HomePage.setUp(self)
 
     def test_get_method(self):
-        self.client.get('home')
-        self.client.get('save')
+        self.client.get(reverse('home'))
+        self.client.get(reverse('save'))
         self.assertTemplateUsed('home.html')
+
+    def test_save_product_ok(self):
+        self.client.post(reverse('save'),
+            {
+            'product_search_id': "32",
+            'substitute_id': "355"})
+        self.assertEqual(Favorite_product.objects.filter(user_id=self.user).count(), 1)
+        self.assertTemplateUsed('home.html')
+
+    def test_save_product_fail_id_doesnt_exist(self):
+        self.client.post(reverse('save'),
+            {
+            'product_search_id': "31",
+            'substitute_id': "355"})
+        self.assertEqual(Favorite_product.objects.filter(user_id=self.user).count(), 0)
+        self.assertTemplateUsed('home.html')
+
+    def test_save_product_fail_insuffisant_data(self):
+        self.client.post(reverse('save'),
+            {
+            'product_search_id': "32"})
+        self.assertEqual(Favorite_product.objects.filter(user_id=self.user).count(), 0)
+        self.assertTemplateUsed('home.html')
+
+    def test_delete_ok(self):
+        self.client.post(reverse('save'),
+            {
+                'product_search_id': "32",
+                'substitute_id': "355"
+            })
+        self.client.post(reverse('delete'),
+            {
+                'product_search_id': '',
+                'substitute_id': '32'
+            })
+        self.assertEqual(Favorite_product.objects.filter(user_id=self.user).count(), 0)
+
+    def test_delete_fail_wrong_data(self):
+        self.client.post(reverse('save'),
+            {
+                'product_search_id': "32",
+                'substitute_id': "355"
+            })
+        self.client.post(reverse('delete'),
+            {
+                'product_search_id': '354',
+                'substitute_id': '31'
+            })
+        self.assertEqual(Favorite_product.objects.filter(user_id=self.user).count(), 1)
+
+    def test_delete_fail_insuffisant_data(self):
+        self.client.post(reverse('save'),
+            {
+                'product_search_id': "32",
+                'substitute_id': "355"
+            })
+        self.client.post(reverse('delete'),
+            {
+            })
+        self.assertEqual(Favorite_product.objects.filter(user_id=self.user).count(), 1)
