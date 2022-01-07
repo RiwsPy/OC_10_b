@@ -11,6 +11,7 @@ from catalogue.management.commands.enums import URL_OFF
 username = 'Rititi'
 email = 'ri.titi@mail.fr'
 password = 'pNd9sdfi'
+new_email = 'ri.tata@mail.fr'
 
 
 class Test_favorite_product(LiveServerTestCase):
@@ -19,7 +20,8 @@ class Test_favorite_product(LiveServerTestCase):
         category_01 = Category.objects.create(
             name="Plat léger"
         )
-        img_link = URL_OFF + "images/products/317/658/201/6252/front_fr.59.400.jpg"
+        img_link = URL_OFF +\
+            "images/products/317/658/201/6252/front_fr.59.400.jpg"
         product_01 = Product.objects.create(
             code="32",
             product_name="Fromage à raclette",
@@ -38,7 +40,8 @@ class Test_favorite_product(LiveServerTestCase):
         product_01.categories.set([category_01])
 
         cod = 355
-        img_link = URL_OFF + "images/products/359/669/013/6046/front_fr.39.400.jpg",
+        img_link = URL_OFF +\
+            "images/products/359/669/013/6046/front_fr.39.400.jpg",
         for i in range(10):
             new_product = Product.objects.create(
                 code=str(cod+i),
@@ -167,3 +170,77 @@ class Test_favorite_product(LiveServerTestCase):
         self.assertEqual(
             self.driver.current_url,
             self.live_server_url + reverse('home'))
+
+
+class Test_change_email(LiveServerTestCase):
+    def setUp(self):
+        # Create new user
+        self.data = {
+            'username': username,
+            'email': email,
+            'password': password,
+        }
+        self.user = User.objects.create_user(**self.data)
+        self.client.login(**self.data)
+
+        root_dir = os.path.dirname(os.path.abspath(__file__))
+        self.driver = webdriver.Firefox(
+            executable_path=os.path.join(root_dir, 'geckodriver'))
+        self.action = webdriver.ActionChains(self.driver)
+
+        # Open the navigator with the server adress
+        self.driver.get(self.live_server_url)
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test_login(self):
+        login = self.driver.find_element_by_id('login_button')
+        login.click()
+        self.driver.implicitly_wait(3)
+        username_field = self.driver.find_element_by_id('id_username')
+        username_field.send_keys(username)
+        password_field = self.driver.find_element_by_id('id_password1')
+        password_field.send_keys(password)
+        button_ok = self.driver.find_element_by_id('login_validate')
+        self.action.move_to_element(button_ok)
+        button_ok.click()
+        self.change_email()
+
+    def change_email(self):
+        login = self.driver.find_element_by_id('account_button')
+        login.click()
+        self.driver.implicitly_wait(3)
+        time.sleep(3)
+        change_button = self.driver.find_element_by_id('change_account_data')
+        change_button.click()
+
+        time.sleep(1)
+        email_field = self.driver.find_element_by_id('email_input_1')
+        email_field.send_keys(new_email)
+        email_field = self.driver.find_element_by_id('email_input_confirm')
+        time.sleep(1)
+        email_field.send_keys(new_email)
+        button_ok = self.driver.find_element_by_id('change_email_button')
+        button_ok.click()
+        time.sleep(2)
+
+        self.assertEqual(
+            User.objects.get(username=username).email,
+            new_email)
+
+        self.delete_account()
+
+    def delete_account(self):
+        change_button = self.driver.find_element_by_id('change_account_data')
+        change_button.click()
+        btn_delete_1 = self.driver.find_element_by_id('delete_account')
+        btn_delete_1.click()
+        time.sleep(1)
+        btn_delete_2 = self.driver.find_element_by_id('delete_account_confirm')
+        btn_delete_2.click()
+        time.sleep(1)
+
+        self.assertEqual(
+            User.objects.filter(username=username).count(),
+            0)

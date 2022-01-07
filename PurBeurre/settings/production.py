@@ -14,11 +14,6 @@ MIDDLEWARE.insert(
     )
 
 
-# Simplified static file serving.
-#STATICFILES_STORAGE = \
-    #'django.contrib.staticfiles.storage.StaticFilesStorage'
-    #'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
@@ -33,7 +28,7 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'root': {
-        'level': 'INFO', # WARNING by default. Change this to capture more than warnings.
+        'level': 'INFO',  # WARNING by default.
         'handlers': ['sentry'],
     },
     'formatters': {
@@ -44,8 +39,10 @@ LOGGING = {
     },
     'handlers': {
         'sentry': {
-            'level': 'INFO', # To capture more than ERROR, change to WARNING, INFO, etc.
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            # To capture more than ERROR, change to WARNING, INFO, etc.
+            'level': 'INFO',
+            'class': 'raven.contrib.django.raven_compat.handlers'
+                + '.SentryHandler',
             'tags': {'custom-tag': 'x'},
         },
         'console': {
@@ -74,7 +71,8 @@ LOGGING = {
 }
 
 sentry_sdk.init(
-    dsn="https://d42e418337c0497ca27ee7012c862b71@o1055791.ingest.sentry.io/6041945",
+    dsn="https://d42e418337c0497ca27ee7012c862b71@o1055791" +
+        ".ingest.sentry.io/6041945",
     integrations=[DjangoIntegration()],
 
     # Set traces_sample_rate to 1.0 to capture 100%
@@ -88,7 +86,7 @@ sentry_sdk.init(
 )
 
 RAVEN_CONFIG = {
-    'dsn': 'https://somethingverylong@sentry.io/6041945', # caution replace by your own!!
+    'dsn': 'https://somethingverylong@sentry.io/6041945',
     # If you are using git, you can also automatically configure the
     # release based on the git info.
     'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
